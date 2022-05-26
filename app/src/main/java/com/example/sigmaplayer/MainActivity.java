@@ -1,21 +1,19 @@
 package com.example.sigmaplayer;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,6 +24,11 @@ import android.widget.Toast;
 import com.audioplay.audio.SigmaPlayer;
 import com.audioplay.audio.SigmaPlayerEventsListener;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity implements SigmaPlayerEventsListener {
     private String MEDIA_URI[] = {
             "https://pgdvqbnmsaobj.vcdn.cloud/mediahub/output/Kc4rW-SFUxl-C2Ddtwruh-khen-mo/mp3/128kbps.mp3",
@@ -35,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements SigmaPlayerEvents
             "https://pgdvqbnmsaobj.vcdn.cloud/mediahub/output/pIJy_6gG-DK_UK3EMIIGh-me-oi-con-muon-tro-ve-ngoc-anh/mp3/128kbps.mp3",
             "https://pgdvqbnmsaobj.vcdn.cloud/mediahub/output/w5RElq0Fr_JJBZA7eLDNd-hay-nhuom-gio-bien-khoi/mp3/128kbps.mp3",
             "/data/user/0/com.example.sigmaplayer/files/khen_mo.mp3",
-            "/data/user/0/com.example.sigmaplayer/files/other_file_test.mp3",
+            "/storage/self/primary/Download/other_file_test.mp3",
     };
 
     private Button _playBtn, _nextBtn, _saveThisFileBtn, _backBtn, _saveOtherFileBtn;
@@ -284,10 +287,16 @@ public class MainActivity extends AppCompatActivity implements SigmaPlayerEvents
             public void onClick(View v) {
                 if (_smPlayer != null) {
                     String filePath = getFilesDirPath() + "/khen_mo.mp3";
-                    _smPlayer.saveOtherFile(filePath);
+                    _smPlayer.saveFile(filePath);
                 }
             }
         });
+    }
+
+    String getDownloadPath() {
+        File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        String downloadPath = downloadFolder.getPath();
+        return downloadPath;
     }
 
     private void renderSaveOtherFileBtn() {
@@ -295,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements SigmaPlayerEvents
         _saveOtherFileBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (_smPlayer != null) {
-                    String filePath = getFilesDirPath() + "/other_file_test.mp3";
+                    String filePath = getDownloadPath() + "/other_file_test.mp3";
                     _smPlayer.saveOtherFile(_downloadUriString, filePath);
                 }
             }
@@ -379,4 +388,5 @@ public class MainActivity extends AppCompatActivity implements SigmaPlayerEvents
 
         Log.e("SigmaMusic DRM", "onFileSaved " + uri + "File path: " + filePath);
     }
+
 }
